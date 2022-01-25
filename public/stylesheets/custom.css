@@ -1,0 +1,162 @@
+.fieldWithErrors {
+    padding: 3px;
+    background-color: red;
+    display: table;
+    width:63%;
+}
+
+.fieldWithErrors input {
+    width:97%;
+    margin-left:2px;    
+}
+
+.fieldWithErrors select {
+    width:97%;
+    margin-left:2px;
+}
+
+.fieldWithErrors textarea {
+    padding: 3px;
+    width:97%;
+    display: table;
+}
+
+input:focus {
+    outline: green solid thin;
+}
+
+select:focus {
+    outline: green solid thin;
+}
+
+textarea:focus {
+    outline: green solid thin;
+}
+
+img.wispmanager_logo {
+    vertical-align:sub;
+}
+
+h4 {
+    text-align:center;
+}
+
+fieldset p textarea {
+    width:98%;
+    margin-left:5px;
+}
+
+fieldset p label {
+    width:98%;
+    margin-left:5px;
+}
+
+fieldset p input {
+    width:98%;
+    margin-left:5px;
+}
+
+fieldset p select {
+    width:99%;
+    margin-left:5px;
+}
+
+h1#branding {
+    font-size:2em;
+}
+
+#locales {
+    float: right;
+    margin-top:-30px;
+    margin-right:5px;
+}
+
+.warn {
+    font-size:1.5em;
+    color:red;
+    text-align:center;
+}
+
+.warn input {
+    margin:5px 30%;
+    width:40%;
+}
+
+.info {
+    font-size:1.5em;
+    color:green;
+    text-align:center;
+}
+
+.notice {
+    font-size:1.4em;
+    text-align:center;
+}
+
+.nohand {
+    cursor:default;
+}
+
+.right {
+    float:right;
+}
+
+.center, .center * {
+    text-align:center;
+}
+
+.pad_top_5 {
+    padding-top:5px;
+}
+
+#wisp_map {
+    width:100%;
+    height:300px;
+}
+
+#access_point_map {
+    width:100%;
+    height:240px;
+}
+
+#access_point_new_map, #access_point_edit_map {
+    width:100%;
+    height:320px;
+}
+
+.lat, .lon {
+    display:none;
+}
+
+.center {
+    text-align:center;
+}
+
+#search{ margin-bottom: 7px }
+input[type=submit], input[type=button], input[type=reset], button{ cursor: pointer }
+
+.remove{
+    background-color: #d00000;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    float: right;
+}
+.remove:hover{ color: #fff }
+
+.add{
+    background-color: green;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    float: left;
+    margin-bottom: 20px;
+}
+.add:hover{ color:  #fff }
+
+.button-wrapper{ padding: 0 }
+.button-wrapper h5{ margin: 0 }
+.button-wrapper a{ display: block; padding: 7px 0px; margin: 0 auto }
+
+.contrast{ background-color: #333; color: #fff }
+.contrast:hover{ background-color: #000; color: #fff }

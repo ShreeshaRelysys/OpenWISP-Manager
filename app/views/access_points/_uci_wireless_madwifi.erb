@@ -1,0 +1,64 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+
+  config 'wifi-device' '<%= h radio.name %>'
+    option 'type' 'atheros'
+    option 'hwmode' '<%= h radio.mode %>'
+    option 'channel' '<%= h radio.channel %>'
+    option 'diversity' '0'
+    option 'txantenna' '0'
+    option 'rxantenna' '0'
+    option 'txpower' '19'
+    option 'bursting' '1'
+    option 'wmm' '1'
+    option 'turbo' '1'
+    option 'disabled' '0'
+
+<% radio.vaps.each do |vap| -%>
+
+  config 'wifi-iface' '<%= h vap.name %>'
+    option 'device' '<%= h radio.name %>'
+    option 'ifname' '<%= h vap.name %>'
+<% if vap.bridge -%>
+    option 'network' '<%= h vap.bridge.name %>'
+<% end -%>
+    option 'mode' 'ap'
+    option 'ssid' '<%= h vap.essid %>'
+    option 'hidden' '<%= vap.visibility == 'broadcasted' ? 0 : 1 %>'
+    option 'isolate' '1'
+    option 'encryption' '<%= h vap.encryption %>'
+<% if vap.encryption != 'none' -%>
+    option 'key' '<%= h vap.key %>'
+<% if vap.encryption.match(/^(wpa)|(wpa2)$/) -%>
+    option 'server' '<%= h vap.radius_auth_server %>'
+    option 'port' '<%= h vap.radius_auth_server_port %>'
+<% if vap.radius_acct_server.present? -%>
+    option 'acct_server' '<%= h vap.radius_acct_server %>'
+    option 'acct_port' '<%= h vap.radius_acct_server_port %>'
+    option 'acct_secret' '<%= h vap.key %>'
+<% end -%>
+<% end -%>
+<% end -%>
+    option 'bgscan' '0'
+    option 'wds' '0'
+    option 'macpolicy' 'none'
+    option 'wmm' '0'
+
+<% end -%>

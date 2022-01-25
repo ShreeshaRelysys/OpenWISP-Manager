@@ -1,0 +1,78 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div id="show_l2vpn_server_div">
+  <a><%= t :Detailed_l2vpn_server_infos %></a>
+
+  <table>
+    <tr>
+      <td><strong><%= t :Wisp_name %></strong></td>
+      <td><%= h @l2vpn_server.wisp.name %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_name %></strong></td>
+      <td><%= h @l2vpn_server.name %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_bindall %></strong></td>
+      <td><%= h @l2vpn_server.bindall %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_ip %></strong></td>
+      <td><%= h @l2vpn_server.ip %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_port %></strong></td>
+      <td><%= h @l2vpn_server.port %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_cipher %></strong></td>
+      <td><%= h @l2vpn_server.cipher %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_protocol %></strong></td>
+      <td><%= h @l2vpn_server.protocol %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_mtu %></strong></td>
+      <td><%= h @l2vpn_server.mtu %></td>
+    </tr>
+    <tr>
+      <td><strong><%= t :L2vpn_server_mtu_discovery %></strong></td>
+      <td><%= h @l2vpn_server.mtu_disc %></td>
+    </tr>
+    <%
+    notes = h(@l2vpn_server.notes).gsub(/\n/, "<br>")
+    if(notes != '') %>
+    <tr>
+      <td colspan="2">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong><%= t :Notes %></strong></td>
+    </tr>
+    <tr>
+      <td colspan="2"><%= notes %></td>
+    </tr>
+    <% end %>
+  </table>
+  <div class="box center button-wrapper">
+    <h5><a href="<%= url_for get_server_config_path(:id => @l2vpn_server.id) %>" class="contrast"><%= t(:Download_Config) %></a></h5>
+  </div>
+</div>
+

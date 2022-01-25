@@ -1,0 +1,45 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div class="grid_16">
+  <div class="box">
+    <h4><a><%= t(:New_access_point_group) %> - <%=h @wisp.name %></a></h4>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+
+<div class="grid_14 prefix_1 suffix_1">
+  <div class="box">
+    <h2><a href="#" id="toggle-forms"><%=h t(:New_access_point_group) %></a></h2>
+    <ul class="nav main">
+      <li>
+        <%= link_to t(:Back), :back %>
+      </li>
+    </ul>
+    <div class="clear">&nbsp;</div>
+    <div class="block" id="access_point_group_block">
+      <%= render 'form',
+                 :wisp => @wisp,
+                 :access_point_group => @access_point_group,
+                 :selected_access_points => @selected_access_points
+      %>
+    </div>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>

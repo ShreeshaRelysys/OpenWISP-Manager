@@ -1,0 +1,66 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+mode  server
+proto <%= l2vpn_server.protocol == 'tcp' ? 'tcp-server' : 'udp' %>
+
+port  <%=h l2vpn_server.port %>
+<% if !l2vpn_server.bindall %>
+ local <%=h l2vpn_server.ip %>
+<% end %>
+
+<% if l2vpn_server.protocol == 'udp' and !l2vpn_server.mtu.nil? %>
+ fragment <%=h l2vpn_server.mtu - 8 %>
+<% end %>
+<% if !l2vpn_server.mtu_disc.nil? and !l2vpn_server.mtu_disc.blank? %>
+ mtu-disc <%=h l2vpn_server.mtu_disc %>
+<% end %>
+
+dev   <%=h l2vpn_server.tap.name %>
+dev-type  tap
+
+log-append  /var/log/openvpn/<%=h l2vpn_server.name.gsub(" ", "_") + '.log' %>
+status      /var/log/openvpn/<%=h l2vpn_server.name.gsub(" ", "_") + '.stats' %>
+
+<% if l2vpn_server.cipher != 'none' %>
+tls-server
+cipher      <%=h l2vpn_server.cipher %>
+ca          /etc/openvpn/<%=h ca_name  + '-ca-crt.pem' %>
+#crl-verify /etc/openvpn/<%=h ca_name  + '-crl.pem ' %>
+cert        /etc/openvpn/<%=h ca_name  + '-server-crt.pem ' %>
+key         /etc/openvpn/<%=h ca_name  + '-server-key.pem ' %>
+dh          /etc/openvpn/<%=h ca_name  + '-dh1024.pem' %>
+#tls-auth    /etc/openvpn/<%=h ca_name  + '-tls-data-key.pem 0' %>
+<% end %>
+
+keepalive    5 15
+
+comp-lzo
+
+user         nobody
+group        nogroup
+
+persist-key
+persist-tun
+
+verb         1
+mute         20
+
+#management      127.0.0.1 12122 /path/to/<%=h l2vpn_server.name.gsub(" ", "_") + '-management-pass'%>
+#management-forget-disconnect

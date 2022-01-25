@@ -1,0 +1,67 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div id="new_custom_script_template_div">
+  <fieldset>
+    <legend><%=t :Custom_script_template %></legend>
+    <% remote_form_for([@wisp, @access_point_template, @custom_script_template],
+            :update => { :success => "new_custom_script_template_div", :failure => "new_custom_script_template_div" }
+       ) do |f| %>
+      <p><%= f.error_messages %></p>
+
+		  <p>
+				<%= f.label t(:Name) %><br />
+        <%= f.text_field :name, :maxlength => 32%>
+		  </p>
+			<fieldset>
+			<legend><%=t :Cron_info %></legend>
+		  <p>
+     		<table>
+					<tr>
+						<td style="text-align:center"> <%= f.label t :Cron_minute %> </td>
+						<td style="text-align:center"> <%= f.label t :Cron_hour %> </td>
+						<td style="text-align:center"> <%= f.label t :Cron_day %> </td>
+						<td style="text-align:center"> <%= f.label t :Cron_month %> </td>		    	
+						<td style="text-align:center"> <%= f.label t :Cron_weekday %> </td>
+					</tr>
+					<tr>	
+						<td style="text-align:center"> <%= f.text_field :cron_minute, :size => 6 %> </td>
+						<td style="text-align:center"> <%= f.text_field :cron_hour, :size => 6 %> </td>
+						<td style="text-align:center"> <%= f.text_field :cron_day, :size => 6 %></td>
+						<td style="text-align:center"> <%= f.text_field :cron_month, :size => 6 %> </td>
+						<td style="text-align:center"> <%= f.text_field :cron_weekday, :size => 6 %> </td>
+					</tr>
+				</tbody>
+				</table>					
+		  </p>
+			</fieldset>
+		  <p>
+				<%= f.label t(:Cron_body) %>
+		    <%= f.text_area :body, :rows => 10 %>
+		  </p>
+		  <p>
+		    <%= f.label :notes %><br />
+		    <%= f.text_area :notes, :rows => 3  %>
+		  </p>
+      <p>
+      <%= f.submit t(:Create) %>
+      </p>
+    <% end %>
+  </fieldset>
+</div>

@@ -1,0 +1,75 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div id="edit_l2vpn_server_div">
+  <fieldset>
+    <legend><%=t :General_infos %></legend>
+    <% remote_form_for([@server, @l2vpn_server], 
+        :update => { :success => "edit_l2vpn_server_div", :failure => "edit_l2vpn_server_div" }
+       ) do |f| %>
+      <p><%= f.error_messages %></p>
+      <p>
+        <%= f.label t(:Wisp) %><br />
+        <%= f.select( :wisp_id, @wisps.map{ |w| [w.name, w.id] }, {}, :disabled => true ) %>
+      </p>
+      <p>
+        <%= f.label t(:L2vpn_server_name) %><br />
+        <%= f.text_field :name %>
+      </p>
+      <p>
+        <%= f.label t(:L2vpn_server_bindall) %><br />
+        <%= f.check_box :bindall %>
+      </p>
+	  <p>
+        <%= f.label t(:L2vpn_server_ip) %><br />
+        <%= f.text_field :ip %>
+      </p>
+      <p>
+        <%= f.label t(:L2vpn_server_port) %><br />
+        <%= f.text_field :port %>
+      </p>
+      <p>
+        <%= f.label t(:L2vpn_server_cipher) %><br /> 
+        <%= f.select( :cipher, L2vpnServer::CIPHERSUITES_SELECT ) %>
+      </p>
+      <p>
+        <%= f.label t(:L2vpn_server_protocol) %><br /> 
+        <%= f.select( :protocol, L2vpnServer::PROTOCOLS_SELECT ) %>
+      </p>
+      <p>
+        <%= f.label t(:L2vpn_server_mtu) %><br />
+        <%= f.text_field :mtu %>
+      </p>
+      <p>
+        <%= f.label t(:L2vpn_server_mtu_discovery) %><br /> 
+        <%= f.select( :mtu_disc, L2vpnServer::MTU_DISCOVERIES_SELECT) %>
+      </p>
+      <p>
+        <%= f.label t(:Notes) %><br />
+        <%= f.text_area :notes, :rows => 3 %>
+      </p>
+      <p>
+        <%= f.submit t(:Update) %>
+      </p>
+    <% end %>
+  </fieldset>
+  <div class="box center button-wrapper">
+    <h5><a href="<%= url_for get_server_config_path(:id => @l2vpn_server.id) %>" class="contrast"><%= t(:Download_Config) %></a></h5>
+  </div>
+</div>

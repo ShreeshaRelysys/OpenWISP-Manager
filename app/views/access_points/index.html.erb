@@ -1,0 +1,131 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div class="grid_16">
+  <div class="box">
+    <h4><a><%= t(:Access_points_list) %> - <%=h @wisp.name %></a></h4>
+    <%# SEARCH - added in june 2012 %>
+    <br />
+    <h2><%= t(:Search) %></h2>
+    <div class="block">
+      <form action="" method="get" id="search">
+        <input type="text" name="q" value="<%= @q %>" id="q" />
+        <input type="submit" value="<%= t(:Do_search) %>" />
+        <input type="reset" value="<%= t(:Reset) %>" />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <%= t(:Scope) %>:&nbsp;
+        <label><input type="radio" name="scope" value="local" <%= 'checked="checked" ' if @scope == "local" or not @scope.present? %>/> <%= t(:Wisp_only, :wisp => @wisp.name) %></label>
+        &nbsp;&nbsp;
+        <label><input type="radio" name="scope" value="global" <%= 'checked="checked" ' if @scope == "global" %>/> <%= t(:All_wisps) %></label>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <%= t(:Search_in) %>: &nbsp;&nbsp; <label><%= t(:Name) %> <input type="checkbox" name="name" <%= 'checked="checked" ' if @name == 'on' or not @q %>/></label> &nbsp;
+        <label><%= t(:Mac_address) %> <input type="checkbox" name="mac" <%= 'checked="checked" ' if @mac == 'on' or not @q %>/></label> &nbsp;
+        <label><%= t(:Address) %> <input type="checkbox" name="address" <%= 'checked="checked" ' if @address == 'on' or not @q %>/></label> &nbsp;
+      </form>
+      <script type="text/javascript">
+        // does an asynchronous request to search access points
+        var ajaxSearch = function(options){
+          // prepare querystring or empty in case of reset
+          var querystring = (options && options.reset===true) ? '' : '?'+$('#search').serialize();
+          // change cursor
+          $('body, #search input').css('cursor', 'progress');
+          // do GET HTTP request
+          $.get(location.href+'_ajax'+querystring, function(data){
+            // show results
+            $('#access_points').html(data);
+            // restore cursor
+            $('body, #search input').css('cursor', 'auto');
+          });
+        }
+
+        // executes ajaxSearch with some delay
+        var setDelayedSearch = function(){
+          window.searchTimer = setTimeout(function(){
+            ajaxSearch();
+          }, 600);
+        }
+
+        // cancel execution of delayed ajaxSearch
+        var cancelDelayedSearch = function(){
+          if(window.searchTimer){
+            clearTimeout(window.searchTimer);
+          }
+        }
+
+        // cache #search jquery obj
+        var $search = $('#search');
+
+        // on submit event of the forms
+        $search.submit(function(e){
+          e.preventDefault();
+          ajaxSearch();
+          cancelDelayedSearch();
+        })
+        // on key up event of the input keyword
+        .find('#q').keyup(function(e){
+          // store input value
+          var value = $(this).val();
+          // if not pressing enter and value is longer than 3
+          // or if value is empty
+          if((e.which != 13 && value.length > 3) || value == '' ){
+            cancelDelayedSearch();
+            setDelayedSearch();
+          }
+        })
+        // bind click events on input elements
+        $search.find('input').click(function(e){
+          // store type
+          var type = $(this).attr('type');
+          cancelDelayedSearch();
+          switch(type){
+            case 'checkbox':
+              setDelayedSearch();
+            case 'radio':
+              ajaxSearch();
+              break;
+            case 'reset':
+              ajaxSearch({'reset':true});
+              break;
+          }
+        });
+      </script>
+    </div>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+
+<% if (auth?(:wisps_creator) || auth?(:access_points_creator, @wisp)) && @access_points.length > 5  %>
+    <div class="grid_14 prefix_1 suffix_1">
+      <div class="box center button-wrapper">
+        <h5><%= link_to t(:Create_New), new_wisp_access_point_path(@wisp) %></h5>
+      </div>
+    </div>
+<% end %>
+
+<div id="access_points">
+  <%= render :partial => 'index_partial' %>
+</div>
+
+<% if auth?(:wisps_creator) || auth?(:access_points_creator, @wisp) %>
+    <div class="grid_14 prefix_1 suffix_1">
+      <div class="box center  button-wrapper">
+        <h5><%= link_to t(:Create_New), new_wisp_access_point_path(@wisp) %></h5>
+      </div>
+    </div>
+<% end %>

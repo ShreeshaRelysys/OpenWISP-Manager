@@ -1,0 +1,55 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div id="edit_radio_div">
+  <fieldset>
+    <legend><%= t :Editing_radio %></legend>
+    <% remote_form_for([@wisp, @access_point, @radio],
+                       :update => {:success => "edit_radio_div", :failure => "edit_radio_div"}
+       ) do |f| %>
+        <p><%= f.error_messages %></p>
+
+        <p>
+          <%= f.label t(:Name) %> : <strong> <%= @radio.name %> </strong> <br/>
+        </p>
+
+        <p>
+          <%= f.label t(:Driver) %> : <strong> <%= @radio.driver %> </strong> <br/>
+        </p>
+
+        <p>
+          <%= f.label t(:Mode) %> : <strong> <%= @radio.mode %> </strong> <br/>
+        </p>
+
+        <p>
+          <%= f.label t(:Channel) %> <br/>
+          <%= f.select :channel, Radio.channels_for_mode(@radio.mode), { :selected => @radio.channel.to_s } %>
+        </p>
+
+        <p>
+          <%= f.label t(:Notes) %><br/>
+          <%= f.text_area :notes, :rows => 3, :value => @radio.notes %>
+        </p>
+
+        <p>
+          <%= f.submit t(:Update) %>
+        </p>
+    <% end %>
+  </fieldset>
+</div>

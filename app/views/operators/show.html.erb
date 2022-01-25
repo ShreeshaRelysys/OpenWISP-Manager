@@ -1,0 +1,89 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div class="grid_16">
+  <div class="box">
+    <h4><%=t :Welcome, :operator => h(@operator.login) %></h4>
+    <% if @operator.wisp %>
+        <h5 class="center pad_top_5"><%=t :Operator_of, :wisp => h(@operator.wisp.name) %></h5>
+    <% end %>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+
+<div class="grid_7">
+  <div class="box">
+    <h2><%=t :Stats %></h2>
+    <div class="block">
+      <table>
+        <tbody>
+        <tr>
+          <td><strong><%=t :Current_login_at %></strong></td>
+          <td class="center"><%= @operator.current_login_at.to_s(:short) %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Last_login_at %></strong></td>
+          <td class="center"><%= @operator.last_login_at.blank? ? "" : @operator.last_login_at.to_s(:short) %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Current_login_ip %></strong></td>
+          <td class="center"><%= @operator.current_login_ip %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Last_login_ip %></strong></td>
+          <td class="center"><%= @operator.last_login_ip.blank? ? "" : @operator.last_login_ip %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Login_count %></strong></td>
+          <td class="center"><%= @operator.login_count %></td>
+        </tr>
+        <% unless @operator.notes.blank? %>
+            <tr><td colspan="2">&nbsp;</td></tr>
+            <tr>
+              <td class="center" colspan="2"><strong><%=t :Notes %></strong></td>
+            </tr>
+            <tr>
+              <td class="center" colspan="2"><%=h @operator.notes %></td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="grid_9">
+  <div class="box">
+    <h2><%=t :Roles %></h2>
+    <div class="block">
+      <table>
+        <tbody class="center">
+        <% @operator.roles.in_groups_of(2) do |role_left, role_right| %>
+            <tr>
+              <td><%= role_left %></td>
+              <td><%= role_right %></td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+

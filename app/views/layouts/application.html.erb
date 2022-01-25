@@ -1,0 +1,164 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dli">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>
+    <%=t :vWisps_manager %>
+    <% if @wisp %>
+        - <%=h @wisp.name %>
+    <% end %>
+  </title>
+  <%= stylesheet_link_tag '960/css/reset',
+			  '960/css/text',
+			  '960/css/grid',
+			  '960/css/layout',
+			  '960/css/nav',
+			  '960/css/notification',
+			  'application'
+  %>
+
+  <% for_ie :version => '6' do %>
+    <%= stylesheet_link_tag '960/css/ie6' %>
+  <% end %>
+
+  <% for_ie :if => 'gte', :version => '7' do %>
+    <%= stylesheet_link_tag '960/css/ie' %>
+  <% end %>
+
+  <%= stylesheet_link_tag 'custom' %>
+
+  <%= javascript_include_tag :defaults, 'fluid960'  %>
+
+  <%= yield :after_defaults %>
+
+  <%= yield :js_templates %>
+</head>
+<body>
+<div class="container_16">
+  <div class="grid_16">
+    <h1 id="branding">OpenWISP Manager</h1>
+    <div id="locales"><%= link_to_locale 'it' %> <%= link_to_locale 'en' %></div>
+  </div>
+  <div class="clear">&nbsp;</div>
+
+  <div class="grid_8" id="_flash_bar"style="color:green">
+    <strong><%= flash[:notice] ? flash[:notice] : "&nbsp;" %></strong>
+  </div>
+  <div class="grid_8" style="text-align:right">
+    <a>
+      <% if current_operator %>
+          <%= t(:Logged_in_as) %>: <%=h current_operator.login %>
+      <% else %>
+          <%= t(:Not_logged_in) %>
+      <% end %>
+    </a>
+  </div>
+  <div class="clear">&nbsp;</div>
+
+  <div class="grid_16">
+    <ul class="nav main">
+      <% if auth?(:wisps_viewer) %>
+          <li><%= link_to t(:Wisps), wisps_path %></li>
+      <% elsif current_operator and auth?(:wisp_viewer, current_operator.wisp) %>
+          <li><%= link_to h(current_operator.wisp.name), current_operator.wisp %></li>
+      <% end %>
+      <% if auth? :servers_viewer %>
+          <li><%= link_to t(:OWISPManager_servers), servers_path %></li>
+      <% end %>
+      <!-- wisp administration menus -->
+      <% if @wisp and @wisp.id %>
+          <% if auth?(:wisps_viewer) || auth?(:access_point_templates_viewer, @wisp) %>
+              <li>
+                <%= link_to t(:Templates), '#', :class => 'nohand' %>
+                <ul>
+<%# TODO: to be restored when a usage for access point template groups will be found
+
+                  <li>
+                    <%= link_to t(:Template_groups), wisp_template_groups_path(@wisp) % >
+                  </li>
+%>
+                  <li><%= link_to t(:All), wisp_access_point_templates_path(@wisp) %></li>
+                </ul>
+              </li>
+          <% end %>
+          <% if auth?(:wisps_viewer) || auth?(:access_points_viewer, @wisp) %>
+              <li>
+                <%= link_to t(:AccessPoints), '#', :class => 'nohand' %>
+                <ul>
+                  <li><%= link_to t(:All), wisp_access_points_path(@wisp) %></li>
+                  <li><%= link_to t(:Outdated), outdated_access_points_path(@wisp) %></li>
+                  <li><%= link_to t(:Create_New), new_wisp_access_point_path(@wisp) %></li>
+                  <% if auth?(:wisps_viewer) || auth?(:access_point_groups_viewer, @wisp) %>
+                      <li><%= link_to t(:Groups), wisp_access_point_groups_path(@wisp) %></li>
+                  <% end %>
+                </ul>
+              </li>
+          <% end %>
+
+          <% if auth?(:wisps_viewer) || auth?(:wisp_viewer, @wisp) %>
+              <li><%= link_to t(:Certification_authority), wisp_ca_path(@wisp) %></li>
+          <% end %>
+          <% if auth?(:wisps_viewer) || auth?(:operators_viewer, @wisp) %>
+              <li><%= link_to t(:Operators), wisp_operators_path(@wisp) %></li>
+          <% end %>
+      <% end %>
+
+      <!-- logout -->
+      <% if current_operator %>
+          <span class="right">
+          <li>
+            <%= link_to t(:Home), welcome_operator_path(current_operator) %>
+          </li>
+          <li>
+            <%= link_to t(:Logout), operator_session_path, :method => :delete %>
+          </li>
+          </span>
+      <% end %>
+    </ul>
+  </div>
+  <div class="clear">&nbsp;</div>
+
+  <div class="grid_16">
+    &nbsp;
+  </div>
+  <div class="clear">&nbsp;</div>
+
+  <%= yield %>
+
+  <div class="grid_16">
+    &nbsp;
+  </div>
+  <div class="clear">&nbsp;</div>
+
+  <div class="grid_16" id="site_info">
+    <div class="box" style="text-align:center">
+      <p>Open WISP Manager - (C) 2012 - <a href="http:/openwisp.org/">OpenWISP.org</a></p>
+    </div>
+  </div>
+  <div class="clear"></div>
+
+</div>
+
+</body>
+</html>

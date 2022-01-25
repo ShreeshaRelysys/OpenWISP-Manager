@@ -1,0 +1,208 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<% content_for :after_defaults do %>
+    <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
+    <%= javascript_include_tag 'owm.gmaps' %>
+<% end  %>
+<div class="grid_16">
+  <div class="box">
+    <h4><a><%= t(:Access_point) %> - <%= @access_point.name %> - <%=h @wisp.name %></a></h4>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+
+<% if @access_point.configuration_outdated? and @access_point.template.present? %>
+    <div class="grid_16">
+      <div class="box">
+        <h2><a href="#" id="toggle-warnings"><%= t(:Warning) %></a></h2>
+        <div class="block warn" id="warnings_block">
+          <p><%=t :Update_one_access_point_warning, :template => @access_point.template.name %></p>
+          <% if auth?(:wisps_manager) || auth?(:access_points_manager, @wisp) %>
+              <% form_tag outdated_access_points_update_path(@wisp, @access_point) do %>
+                  <%= submit_tag t(:Update) %>
+              <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="clear">&nbsp;</div>
+<% end %>
+
+<div class="grid_5">
+  <div class="box">
+    <h2><a href="#" class="toggle-forms"><%=h t(:General_infos) %></a></h2>
+    <ul class="nav main">
+      <% if auth?(:wisps_manager) || auth?(:access_points_manager, @wisp) %>
+          <li><%= link_to t(:Edit), edit_wisp_access_point_path(@wisp, @access_point) %></li>
+      <% end %>
+      <li><%= link_to t(:List_all), wisp_access_points_path(@wisp) %></li>
+    </ul>
+
+    <div class="block" id="access_point_map_block">
+      <span class="lat"><%= @access_point.lat %></span>
+      <span class="lon"><%= @access_point.lon %></span>
+
+      <div id="access_point_map"></div>
+    </div>
+
+    <div class="block" id="access_point_info_block">
+      <table>
+        <tr>
+          <td><strong><%=t :Name %></strong></td>
+          <td><%=h @access_point.name %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Template %></strong></td>
+          <% if @access_point.access_point_template.nil? %>
+              <td><%=t :None %></td>
+          <% else %>
+              <% if auth?(:wisps_viewer) || auth?(:access_point_templates_viewer, @wisp) %>
+                  <td><%= link_to @access_point.access_point_template.name, wisp_access_point_template_path(@wisp, @access_point.access_point_template) %></td>
+              <% else %>
+                  <td><%= @access_point.access_point_template.name %></td>
+              <% end %>
+          <% end %>
+        </tr>
+        <tr>
+          <td><strong><%=t :Mac_address %></strong></td>
+          <td><%=h @access_point.mac_address %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Internal %></strong></td>
+          <td><%= @access_point.internal? ? t(:_yes) : t(:_no) %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Activation_date %></strong></td>
+          <td><%=h @access_point.activation_date %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Address %></strong></td>
+          <td><%=h @access_point.address %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :City %></strong></td>
+          <td><%=h @access_point.city %></td>
+        </tr>
+        <tr>
+          <td><strong><%=t :Last_configuration_retrieve_ip %></strong></td>
+          <td><%=h (@access_point.last_configuration_retrieve_ip ? @access_point.last_configuration_retrieve_ip : '-') %></td>
+        </tr>
+        <% if @access_point.notes.length > 0 %>
+          <tr>
+            <td colspan="2">&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="2"><strong><%=t :Notes %></strong></td>
+          </tr>
+          <tr>
+            <td colspan="2"><%= h(@access_point.notes).gsub(/\n/, "<br>") %></td>
+          </tr>
+        <% end %>
+        <% if  @access_point.access_point_group.present? %>
+          <tr>
+            <td colspan="2">&nbsp;</td>
+          </tr>
+          <tr>
+            <td><strong><%=t :Access_point_group %></strong></td>
+            <td><%= link_to h(@access_point.access_point_group.name), wisp_access_point_group_path(@wisp, @access_point.access_point_group) %></td>
+          </tr>
+        <% end %>
+        <% (1..AccessPoint.attachments_limit).each do |n| %>
+          <% filename = @access_point.attributes["file#{n}"] %>
+          <% if filename %>
+            <tr>
+              <td><strong><%=t :Attachment %> <%= n %></strong></td>
+              <td>
+                <%= link_to filename, access_point_attachment_path(@wisp, @access_point, n) %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="grid_11">
+  <div class="box">
+    <h2><a href="#" class="toggle-forms"><%= t(:Detailed_info) %></a></h2>
+    <ul class="nav main">
+      <li>
+        <%= link_to_remote t(:Radios), :method => :get,
+                           :url => wisp_access_point_radios_url(@wisp, @access_point),
+                           :update => { :success => "access_point_block" }
+        %>
+      </li>
+      <li>
+        <%= link_to_remote t(:Ethernets), :method => :get,
+                           :url => wisp_access_point_ethernets_url(@wisp, @access_point),
+                           :update => { :success => "access_point_block" }
+        %>
+      </li>
+      <li>
+        <%= link_to_remote t(:L2vpns), :method => :get,
+                           :url => wisp_access_point_l2vpn_clients_url(@wisp, @access_point),
+                           :update => { :success => "access_point_block" }
+        %>
+      </li>
+      <li>
+        <%= link_to_remote t(:Vlans), :method => :get,
+                           :url => wisp_access_point_vlans_url(@wisp, @access_point),
+                           :update => { :success => "access_point_block" }
+        %>
+      </li>
+      <li>
+        <%= link_to_remote t(:Bridges), :method => :get,
+                           :url => wisp_access_point_bridges_url(@wisp, @access_point),
+                           :update => { :success => "access_point_block" }
+        %>
+      </li>
+      <li>
+        <%= link_to_remote t(:L2tcs), :method => :get,
+                           :url => wisp_access_point_l2tcs_url(@wisp, @access_point),
+                           :update => { :success => "access_point_block" }
+        %>
+      </li>
+      <li>
+        <%= link_to t(:Custom_scripts), '#', :class => 'nohand' %>
+        <ul>
+          <li>
+            <%= link_to_remote t(:List), :method => :get,
+                               :url => wisp_access_point_custom_scripts_url(@wisp, @access_point),
+                               :update => { :success => "access_point_block" }
+            %>
+          </li>
+          <% if auth?(:wisps_manager) || auth?(:access_points_custom_scripts_manager, @wisp) %>
+              <li>
+                <%= link_to_remote t(:Add), :method => :get,
+                                   :url => new_wisp_access_point_custom_script_url(@wisp, @access_point),
+                                   :update => { :success => "access_point_block" }
+                %>
+              </li>
+          <% end %>
+        </ul>
+      </li>
+    </ul>
+    <div class="block" id="access_point_block">
+      <p class="notice"><%= t(:Select_operation_from_menu) %></p>
+    </div>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>

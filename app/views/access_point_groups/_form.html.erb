@@ -1,0 +1,75 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<% form_for [wisp, access_point_group] do |f| %>
+    <fieldset>
+      <fieldset>
+        <legend><%=t :General_infos %></legend>
+        <p><%= f.error_messages %></p>
+
+        <p>
+          <%= f.label :name, t(:Name) %><br />
+          <%= f.text_field :name, :maxlength => 32 %>
+        </p>
+        <p>
+          <%= f.label :site_url, t(:Site_url) %><br />
+          <%= f.text_field :site_url %>
+        </p>
+        <p>
+          <%= f.label :notes, t(:Notes) %><br />
+          <%= f.text_area :notes, :rows => 3 %>
+        </p>
+      </fieldset>
+
+      <% if auth?(:wisps_manager) %>
+        <fieldset>
+          <legend><%=t :Owmw_services_for_group %></legend>
+
+          <p>
+            <%= f.label :owmw_url, t(:Owmw_url) %><br />
+            <%= f.text_field :owmw_url %>
+          </p>
+          <p>
+            <%= f.label :owmw_username, t(:Username) %><br />
+            <%= f.text_field :owmw_username %>
+          </p>
+          <p>
+            <%= f.label :owmw_password, t(:Password) %><br />
+            <%= f.password_field :owmw_password %>
+          </p>
+        </fieldset>
+      <% end %>
+
+
+      <fieldset>
+        <legend><%=t :Access_points_in_group %></legend>
+
+        <p>
+          <% if wisp.access_points.present? %>
+              <%= render 'access_points_select', :access_points => wisp.access_points, :selected => selected_access_points %>
+          <% else %>
+              <%= t(:No_access_point) %>
+          <% end %>
+        </p>
+      </fieldset>
+
+      <p><%= f.submit t(access_point_group.new_record? ? :Create : :Update) %></p>
+    </fieldset>
+<% end %>
+

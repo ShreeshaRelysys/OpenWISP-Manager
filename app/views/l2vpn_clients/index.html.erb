@@ -1,0 +1,58 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div id="list_l2vpn_clients_div">
+  <a><%=t :Listing_l2vpn_clients %></a>
+
+  <table id="l2vpn_clients-table">
+    <thead>
+      <tr>
+        <th scope="col" class="head-left"><%=t :L2vpn_server %></th>
+        <th scope="col" class="head-right"><%=t :Notes %></th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <td colspan="1" class="foot-left">&nbsp;</td>
+        <td colspan="1" class="foot-right">&nbsp;</td>
+      </tr>
+    </tfoot>
+    <tbody>
+    <% @l2vpn_clients.each do |l2vpn| %>
+      <tr>
+        <td><%=h l2vpn.l2vpn_server.name %></td>
+        <td>
+          <% if (l2vpn.notes.nil? or l2vpn.notes.length == 0) %>
+            &nbsp;
+          <% else %>
+            <%= link_to image_tag("notes.png", :border=>0, :size => "16x16", :alt => t(:Notes)), "#",
+                        :title => h(l2vpn.notes)
+            %>                    
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  
+  <div class="box center button-wrapper">
+    <h5><a href="<%= url_for get_config_path(:mac_address => @access_point.mac_address) %>" class="contrast"><%= t(:Download_Config) %></a></h5>
+  </div>
+  
+</div>

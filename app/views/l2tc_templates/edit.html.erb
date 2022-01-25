@@ -1,0 +1,78 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div id="edit_l2tc_template_div">
+  <fieldset>
+    <legend><%=t (:Editing_l2tc_template) %></legend>
+    <% remote_form_for([@wisp, @access_point_template, @l2tc_template],
+            :update => { :success => "edit_l2tc_template_div", :failure => "edit_l2tc_template_div" }
+      ) do |f| %>
+      <p><%= f.error_messages %></p>
+
+      <p>
+        <%= f.label t(:Notes) %><br />
+        <%= f.text_area :notes, :rows => 3 %>
+      </p>
+
+      <p>
+        <%= f.label t(:Output_band_for_interface, :interface => @l2tc_template.shapeable_template.friendly_name) %><br />
+        <%= text_field "shapeables", :output_band, :value => params[:shapeables][:output_band] %>
+      </p>
+
+      <% i = 0 %>
+      <% @l2tc_template.shapeable_template.subinterfaces.each do |s| %>
+        <% fields_for "subinterfaces[#{i}]" do |sf| %>
+          <%= render :partial => 'subinterface', 
+                     :locals => { :subinterface_template_form => sf, 
+                                  :subinterface_template => s,
+                                  :iteration => i,
+                                  :value => params[:subinterfaces]["#{i}"][:output_band_percent],
+                                  :item_band_percent => "output_band_percent"
+                                }  
+          %>
+        <% end %>
+        <% i = i + 1 %>
+      <% end %>
+
+      <p>
+        <%= f.label t(:Input_band_for_interface, :interface => @l2tc_template.shapeable_template.friendly_name) %><br />
+        <%= text_field "shapeables", :input_band, :value => params[:shapeables][:input_band] %>
+      </p>
+
+      <% i = 0 %>
+      <% @l2tc_template.shapeable_template.subinterfaces.each do |s| %>
+        <% fields_for "subinterfaces[#{i}]" do |sf| %>
+          <%= render :partial => 'subinterface', 
+                     :locals => { :subinterface_template_form => sf, 
+                                  :subinterface_template => s,
+                                  :iteration => i,
+                                  :value => params[:subinterfaces]["#{i}"][:input_band_percent],
+                                  :item_band_percent => "input_band_percent"
+                                }  
+          %>
+        <% end %>
+        <% i = i + 1 %>
+      <% end %>
+
+      <p>
+        <%= f.submit t(:Update) %>
+      </p>
+    <% end %>
+  </fieldset>
+</div>

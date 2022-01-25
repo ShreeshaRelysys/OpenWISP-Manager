@@ -1,0 +1,95 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div id="new_radio_template_div">
+  <fieldset>
+    <legend><%= t :New_radio_template %></legend>
+    <% remote_form_for([@wisp, @access_point_template, @radio_template],
+                       :update => {:success => "new_radio_template_div", :failure => "new_radio_template_div"}
+       ) do |f| %>
+        <p><%= f.error_messages %></p>
+
+        <p>
+          <%= f.label t(:Driver) %><br/>
+          <%= f.select(:driver, RadioTemplate::DRIVERS, {}, {
+                  :onChange => remote_function(
+                          :update => "_modes_select",
+                          :url=> {:action => :modes_for_driver},
+                          :with=> "'driver=' + this.value")
+          })
+          %>
+        </p>
+
+        <p>
+          <%= f.label t(:Driver_slot) %><br/>
+          <%= f.select(:driver_slot, (0..RadioTemplate::MAX_SLOTS-1)) %>
+        </p>
+
+        <p>
+          <%= f.label t(:Mode) %><br/>
+          <span id='_modes_select'>
+            <%= render :partial => 'modes_select_box',
+                       :locals => {
+                               :modes => RadioTemplate.modes_for_driver(@radio_template.driver),
+                               :form_object => @radio_template,
+                               :selected_mode => @radio_template.mode
+                       }
+            %>
+          </span>
+        </p>
+
+        <p>
+          <%= f.label t(:Channel) %><br/>
+          <span id='_channels_select'>
+            <%= render :partial => 'channels_select_box',
+                       :locals => {
+                               :channels => RadioTemplate.channels_for_mode(@radio_template.mode),
+                               :form_object => @radio_template,
+                               :selected_channel => @radio_template.channel.to_s
+                       }
+            %>
+          </span>
+        </p>
+
+        <p>
+          <%= f.label t(:Notes) %><br/>
+          <%= f.text_area :notes, :rows => 3 %>
+        </p>
+
+        <div id="vap_templates">
+        <% f.fields_for :vap_templates do |vf| %>
+            <%= render :partial => 'vap', :locals => {:vap_template_form => vf} %>
+        <% end %>
+        </div>
+
+        <p>
+          <%= f.submit t(:Create) %>
+        </p>
+    <% end %>
+  </fieldset>
+
+  <script type="text/javascript">
+    window.i18n = {
+      maximumVapError: '<%= t(:MaximumVapError)  %>',
+      add: '<%= t(:Add) %>',
+      remove: '<%= t(:Remove) %>'
+    };
+  </script>
+  <script type="text/javascript" src="<%= URI.parse(root_url).merge(javascript_path('owm.vap')) %>"></script>
+</div>

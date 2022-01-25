@@ -1,0 +1,42 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<p>
+  <strong><%=t :Name %></strong>
+  <%=h @radio_template.name %>
+</p>
+
+<p>
+  <strong><%=t Driver %></strong>
+  <%=h @radio_template.driver %>
+</p>
+
+<p>
+  <strong><%=t Mode %></strong>
+  <%=h @radio_template.mode %>
+</p>
+
+<p>
+  <strong><%=t Channel %></strong>
+  <%=h @radio_template.channel %>
+</p>
+
+
+<%= link_to 'Edit', edit_wisp_access_point_template_radio_template_path(@wisp, @access_point_template, @radio_template) %> |
+<%= link_to 'Back', wisp_access_point_template_radio_templates_path(@wisp, @access_point_template) %>

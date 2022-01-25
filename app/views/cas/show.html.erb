@@ -1,0 +1,138 @@
+<%#
+# This file is part of the OpenWISP Manager
+#
+# Copyright (C) 2012 OpenWISP.org
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#%>
+
+<div class="grid_16">
+  <div class="box">
+    <h4><a><%= t(:Certification_authority) %> - <%=h @ca.cn %> - <%=h @wisp.name %></a></h4>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+
+<div class="grid_10 prefix_3 suffix_3">
+  <div class="box">
+    <h2><a href="#"><%= t(:General_infos) %></a></h2>
+    <ul class="nav main">
+      <li><%= link_to t(:Back), :back %></li>
+      <% if auth?(:wisps_manager) || auth?(:wisp_manager, @wisp) || auth?(:ca_manager) %>
+          <li><%= link_to t(:Get_crl_list), wisp_ca_crl_path(@wisp) %></li>
+      <% end %>
+    </ul>
+    <div class="block" id="ca_block">
+      <table>
+        <tr>
+          <td><a><%=t :Cn %></a></td>
+          <td><%=h @ca.cn %></td>
+        </tr>
+        <tr>
+          <td><a><%=t :Dn_prefix %></a></td>
+          <td><%=h @ca.dn_prefix %></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
+
+<div class="grid_14 prefix_1 suffix_1">
+  <div class="box">
+    <h2><a href="#"><%=t :Issued_certificates %></a></h2>
+    <div class="block" id="certificates_block">
+      <table id="cas-table">
+        <thead>
+        <tr>
+          <th scope="col" class="head-left"><%=t :Operations %></th>
+          <th scope="col" class="head"><%=t :Cn %></th>
+          <th scope="col" class="head"><%=t :Owner %></th>
+          <th scope="col" class="head"><%=t :Expiry_date %></th>
+          <th scope="col" class="head-right"><%=t :Status %></th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+          <td colspan="1" class="foot-left">&nbsp;</td>
+          <td colspan="3" class="foot">&nbsp;</td>
+          <td colspan="1" class="foot-right">&nbsp;</td>
+        </tr>
+        </tfoot>
+        <tbody>
+        <% @ca.x509_certificates.each do |cert| %>
+            <tr>
+              <td style="width:52px;">
+                <% if auth?(:wisps_manager) || auth?(:wisp_manager, @wisp) || auth?(:ca_manager) %>
+                    <%= link_to image_tag("renew.png", :border=>0, :size => "16x16", :alt => t(:Renew_certificate)), renew_certificate_path(@wisp, cert),
+                                :title => t(:Renew_certificate),
+                                :confirm => t(:Are_you_sure_certificate_renew)
+                    %>
+                    <% unless cert == @ca.x509_certificate %>
+                        <%= link_to image_tag("reissue.png", :border=>0, :size => "16x16", :alt => t(:Reissue_certificate)), reissue_certificate_path(@wisp, cert),
+                                    :title => t(:Reissue_certificate),
+                                    :confirm => t(:Are_you_sure_certificate_reissue)
+                        %>
+                    <% end %>
+                    <% unless cert == @ca.x509_certificate %>
+                        <%= link_to image_tag("revoke.png", :border=>0, :size => "16x16", :alt => t(:Revoke_certificate)), revoke_certificate_path(@wisp, cert),
+                                    :title => t(:Revoke_certificate),
+                                    :confirm => t(:Are_you_sure_certificate_revoke)
+                        %>
+                    <% end %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to h(cert.dn), wisp_ca_x509_certificate_path(@wisp, cert) %>
+              </td>
+              <td>
+                <% if !cert.certifiable.nil? %>
+                    <% if cert.certifiable.class == L2vpnClient %>
+                        access point '<%= link_to h(cert.certifiable.access_point.name),
+                                                  wisp_access_point_url(@wisp, cert.certifiable.access_point),
+                                                  :title => h(cert.certifiable.access_point.notes)
+              %>' -
+                        <%=h cert.certifiable.tap.friendly_name %>
+                    <% elsif cert.certifiable.class == L2vpnServer %>
+                        server '<%=h cert.certifiable.server.name %>' - layer 2 vpn server '<%=h cert.certifiable.name %>'
+                    <% elsif cert.certifiable.class == Ca %>
+                        <%=h cert.certifiable.cn %> CA
+                    <% else %>
+                        &nbsp;
+                    <% end %>
+                <% else %>
+                    <strong><em><%=h t(:Deleted) %></em></strong>
+                <% end %>
+              </td>
+              <td>
+	          	<%=l cert.expiry_date %>
+			  </td>
+              <td>
+                <% if cert.revoked? %>
+                    <strong style="color:#ee5500"><%=t :Revoked %></strong>
+                <% end %>
+                <% if cert.expired? %>
+                    <strong style="color:#ee0000"><%=t :Expired %></strong>
+                <% elsif !cert.revoked? %>
+                    <strong style="color:#00ee00"><%=t :Valid %></strong>
+                <% end %>
+              </td>
+            </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="clear">&nbsp;</div>
